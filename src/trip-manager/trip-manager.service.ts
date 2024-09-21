@@ -20,7 +20,7 @@ export class TripManagerService {
     try {
       return trip.save();
     } catch (error) {
-      throw new InternalServerErrorException('Error in the trip saving');
+      throw new InternalServerErrorException('Error in the saving');
     }
   }
 
@@ -37,7 +37,7 @@ export class TripManagerService {
 
   async getSavedTrips(user: string): Promise<Trip[]> {
     const trips = await this.tripModel
-      .find({ user }, { _id: 0, __v: 0, createdAt: 0, updatedAt: 0 })
+      .find({ user: user }, { _id: 0, __v: 0, createdAt: 0, updatedAt: 0 })
       .exec();
 
     return trips;

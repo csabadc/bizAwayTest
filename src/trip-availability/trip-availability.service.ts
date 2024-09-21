@@ -1,9 +1,11 @@
-import { Injectable, HttpException } from '@nestjs/common';
+import { Injectable, HttpException, Inject } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { FindTripsDto, SortOptions } from './dto/query-trip.dto';
+import { FindTripsDto } from './dto/query-trip.dto';
 import { firstValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { Trip } from 'src/common/model/trip.model';
+import { sortTrips } from './utils/trip-availability.utis';
+import { CACHE_MANAGER, CacheStore } from '@nestjs/cache-manager';
 
 @Injectable()
 export class TripAvailabilityService {
@@ -11,11 +13,18 @@ export class TripAvailabilityService {
   private readonly apiUrl =
     'https://z0qw1e7jpd.execute-api.eu-west-1.amazonaws.com/default/trips';
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    @Inject(CACHE_MANAGER) private cacheManager: CacheStore,
+  ) {}
 
   async findTrips(query: FindTripsDto): Promise<Trip[]> {
     const { origin, destination, sort_by } = query;
-
+    const cacheKey = `trips:${origin}:${destination}:${sort_by}`;
+    const cachedTrips = await this.cacheManager.get<Trip[]>(cacheKey);
+    if (cachedTrips) {
+      return cachedTrips;
+    }
     try {
       const response: AxiosResponse<Trip[]> = await firstValueFrom(
         this.httpService.get<Trip[]>(this.apiUrl, {
@@ -29,24 +38,15 @@ export class TripAvailabilityService {
         }),
       );
       const trips: Trip[] = response.data || [];
-      return this.sortTrips(trips, sort_by);
+      const sortedTrips = sortTrips(trips, sort_by);
+      await this.cacheManager.set(cacheKey, sortedTrips, { ttl: 3600 });
+      return sortedTrips;
     } catch (error) {
       console.error('Error fetching trips:', error.message);
       throw new HttpException(
         `Failed to fetch trips: ${error.response?.status || 'unknown'} ${error.message}`,
         error.response?.status || 500,
       );
-    }
-  }
-
-  private sortTrips(trips: Trip[], sortOption: SortOptions): Trip[] {
-    switch (sortOption) {
-      case SortOptions.cheapest:
-        return trips.sort((tripA, tripB) => tripA.cost - tripB.cost);
-      case SortOptions.fastest:
-        return trips.sort((tripA, tripB) => tripA.duration - tripB.duration);
-      default:
-        return trips;
     }
   }
 }
