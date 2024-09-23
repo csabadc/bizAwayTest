@@ -12,13 +12,17 @@ import { Trip } from 'src/common/model/trip.model';
 export class TripManagerService {
   constructor(@InjectModel('Trip') private readonly tripModel: Model<Trip>) {}
 
-  async saveTripDto(saveTripDto: SaveTripDto, user: string): Promise<Trip> {
+  async saveTripDto(
+    saveTripDto: SaveTripDto,
+    user: string,
+  ): Promise<{ message: string }> {
     const trip = new this.tripModel({
       ...saveTripDto,
       user,
     });
     try {
-      return trip.save();
+      await trip.save();
+      return { message: 'Trip successfully saved' };
     } catch (error) {
       throw new InternalServerErrorException('Error in the saving');
     }

@@ -6,12 +6,14 @@ import { AxiosResponse } from 'axios';
 import { Trip } from 'src/common/model/trip.model';
 import { sortTrips } from './utils/trip-availability.util';
 import { CACHE_MANAGER, CacheStore } from '@nestjs/cache-manager';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class TripAvailabilityService {
   constructor(
     private readonly httpService: HttpService,
     @Inject(CACHE_MANAGER) private cacheManager: CacheStore,
+    private configService: ConfigService,
   ) {}
 
   async findTrips(query: FindTripsDto): Promise<Trip[]> {
@@ -23,19 +25,24 @@ export class TripAvailabilityService {
     }
     try {
       const response: AxiosResponse<Trip[]> = await firstValueFrom(
-        this.httpService.get<Trip[]>(process.env.TRIP_APIURL, {
-          params: {
-            origin: origin,
-            destination: destination,
+        this.httpService.get<Trip[]>(
+          this.configService.get<string>('TRIP_APIURL'),
+          {
+            params: {
+              origin: origin,
+              destination: destination,
+            },
+            headers: {
+              'x-api-key': this.configService.get<string>('TRIP_APIKEY'),
+            },
           },
-          headers: {
-            'x-api-key': process.env.TRIP_APIKEY,
-          },
-        }),
+        ),
       );
       const trips: Trip[] = response.data || [];
       const sortedTrips = sortTrips(trips, sort_by);
-      await this.cacheManager.set(cacheKey, sortedTrips, { ttl: 3600 });
+      await this.cacheManager.set(cacheKey, sortedTrips, {
+        ttl: this.configService.get<number>('CACHE_LIVE'),
+      });
       return sortedTrips;
     } catch (error) {
       console.error('Error fetching trips:', error.message);

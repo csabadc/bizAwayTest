@@ -8,8 +8,7 @@ import { TripManagerController } from './trip-manager/trip-manager.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PlaceModule } from './places/place.module';
 import { CacheModule } from '@nestjs/cache-manager';
-import dotenv from 'dotenv';
-dotenv.config();
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -18,15 +17,27 @@ dotenv.config();
     TripAvailabilityModule,
     TripManagerModule,
     PlaceModule,
-    MongooseModule.forRoot(
-      `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}?retryWrites=true&w=majority&appName=${process.env.MONGO_APP_NAME}`,
-    ),
-    CacheModule.register({
-      store: require('cache-manager-redis-store'),
-      host: process.env.REDIS_ENDPOINT,
-      port: process.env.REDIS_PORT,
-      username: process.env.REDIS_USERNAME,
-      password: process.env.REDIS_PASSWORD,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        uri: `mongodb+srv://${configService.get('MONGO_USERNAME')}:${configService.get('MONGO_PASSWORD')}@${configService.get('MONGO_CLUSTER')}?retryWrites=true&w=majority&appName=${configService.get('MONGO_APP_NAME')}`,
+      }),
+    }),
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        store: require('cache-manager-redis-store'),
+        host: configService.get<string>('REDIS_ENDPOINT'),
+        port: configService.get<number>('REDIS_PORT'),
+        username: configService.get<string>('REDIS_USERNAME'),
+        password: configService.get<string>('REDIS_PASSWORD'),
+      }),
     }),
   ],
   controllers: [TripAvailabilityController, TripManagerController],

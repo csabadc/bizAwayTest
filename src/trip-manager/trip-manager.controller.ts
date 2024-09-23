@@ -29,7 +29,7 @@ export class TripManagerController {
   async saveTrip(
     @Body() saveTripDto: SaveTripDto,
     @Req() request: Request,
-  ): Promise<Trip> {
+  ): Promise<{ message: string }> {
     return await this.TripManagerService.saveTripDto(
       saveTripDto,
       request['user'].username,
