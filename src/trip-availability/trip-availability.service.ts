@@ -9,10 +9,6 @@ import { CACHE_MANAGER, CacheStore } from '@nestjs/cache-manager';
 
 @Injectable()
 export class TripAvailabilityService {
-  private readonly apiKey = 'fgy6fd9I316DSDD090Shj4eG1DUxuxpI8sZlAOg1';
-  private readonly apiUrl =
-    'https://z0qw1e7jpd.execute-api.eu-west-1.amazonaws.com/default/trips';
-
   constructor(
     private readonly httpService: HttpService,
     @Inject(CACHE_MANAGER) private cacheManager: CacheStore,
@@ -27,13 +23,13 @@ export class TripAvailabilityService {
     }
     try {
       const response: AxiosResponse<Trip[]> = await firstValueFrom(
-        this.httpService.get<Trip[]>(this.apiUrl, {
+        this.httpService.get<Trip[]>(process.env.TRIP_APIURL, {
           params: {
             origin: origin,
             destination: destination,
           },
           headers: {
-            'x-api-key': this.apiKey,
+            'x-api-key': process.env.TRIP_APIKEY,
           },
         }),
       );
