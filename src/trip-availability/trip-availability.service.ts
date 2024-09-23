@@ -4,7 +4,7 @@ import { FindTripsDto } from './dto/query-trip.dto';
 import { firstValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { Trip } from 'src/common/model/trip.model';
-import { sortTrips } from './utils/trip-availability.utis';
+import { sortTrips } from './utils/trip-availability.util';
 import { CACHE_MANAGER, CacheStore } from '@nestjs/cache-manager';
 
 @Injectable()
