@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
-import { extractTokenFromHeader } from 'src/common/utils/request.utils';
+import { extractTokenFromHeader } from '../common/utils/request.utils';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

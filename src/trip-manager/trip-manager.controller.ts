@@ -1,4 +1,4 @@
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import {
   Body,
   Controller,
@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { TripManagerService } from './trip-manager.service';
 import { SaveTripDto } from './dto/save-trip.dto';
-import { Trip } from 'src/common/model/trip.model';
+import { Trip } from '../common/model/trip.model';
 
 @Controller('trip-manager')
 export class TripManagerController {

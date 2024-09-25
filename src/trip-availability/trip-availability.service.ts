@@ -1,4 +1,4 @@
-import { Injectable, HttpException, Inject } from '@nestjs/common';
+import { Injectable, HttpException, Inject, InternalServerErrorException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { FindTripsDto } from './dto/query-trip.dto';
 import { firstValueFrom } from 'rxjs';
@@ -38,18 +38,14 @@ export class TripAvailabilityService {
           },
         ),
       );
-      const trips: Trip[] = response.data || [];
+      const trips: Trip[] = response.data;
       const sortedTrips = sortTrips(trips, sort_by);
       await this.cacheManager.set(cacheKey, sortedTrips, {
         ttl: this.configService.get<number>('CACHE_LIVE'),
       });
       return sortedTrips;
     } catch (error) {
-      console.error('Error fetching trips:', error.message);
-      throw new HttpException(
-        `Failed to fetch trips: ${error.response?.status || 'unknown'} ${error.message}`,
-        error.response?.status || 500,
-      );
+      throw new InternalServerErrorException( `Failed to fetch trips: ${error.response?.status || 'unknown'} ${error.message}`);
     }
   }
 }

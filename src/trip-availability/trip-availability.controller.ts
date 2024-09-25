@@ -1,4 +1,4 @@
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import {
   BadRequestException,
   Controller,
@@ -8,16 +8,15 @@ import {
 } from '@nestjs/common';
 import { FindTripsDto } from './dto/query-trip.dto';
 import { TripAvailabilityService } from './trip-availability.service';
-import { Trip } from 'src/common/model/trip.model';
+import { Trip } from '../common/model/trip.model';
 
 import { PlaceService } from '../places/place.service';
-
 
 @Controller('trip-availability')
 export class TripAvailabilityController {
   constructor(
     private TripAvailabilityService: TripAvailabilityService,
-    private PlaceService: PlaceService
+    private PlaceService: PlaceService,
   ) {}
 
   @UseGuards(AuthGuard)

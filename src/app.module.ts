@@ -6,9 +6,9 @@ import { TripManagerModule } from './trip-manager/trip-manager.module';
 import { TripAvailabilityController } from './trip-availability/trip-availability.controller';
 import { TripManagerController } from './trip-manager/trip-manager.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { PlaceModule } from './places/place.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PlaceModule } from './places/place.module';
 
 @Module({
   imports: [
