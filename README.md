@@ -33,10 +33,9 @@ Make sure you have the following installed:
 3. Setup .env file
   Make sure you have the env file avalialable and ensure that the .env file is present in the root directory of the project.
 
-4. Run the app
-  By default the app is runing on the port 4500
-  ```bash
-  npm start
+4. Run the app (By default the app is runing on the port 4500)
+   ```bash
+   npm start  
 
 
 ## Scripts
