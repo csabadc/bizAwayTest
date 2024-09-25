@@ -35,8 +35,7 @@ Make sure you have the following installed:
 
 4. Run the app (By default the app is runing on the port 4500)
    ```bash
-  npm start
-
+   npm start  
 
 
 ## Scripts
