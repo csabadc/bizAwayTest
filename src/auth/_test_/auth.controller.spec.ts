@@ -29,8 +29,7 @@ describe('AuthController', () => {
     it('should call signIn method of AuthService and return the result', async () => {
       const signInDto = { username: 'testuser', password: 'password123' };
       const result = { accessToken: 'someToken' };
-      mockAuthService.signIn.mockResolvedValue(result); // Mock the return value
-
+      mockAuthService.signIn.mockResolvedValue(result);
       const response = await authController.signIn(signInDto);
       expect(authService.signIn).toHaveBeenCalledWith(
         signInDto.username,
