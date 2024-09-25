@@ -1,6 +1,6 @@
 ## Description
 
-*Trip managers** is a backend service built using the NestJS framework.
+*Trip managers* is a backend service built using the NestJS framework.
  This project utilizes a range of technologies, such as TypeScript, MongoDB, Redis, NestJs and others, to enhance performance and scalability.
 
  ## Features
@@ -28,7 +28,7 @@ Make sure you have the following installed:
 
 2. Instal depencenies:
    ```bash
-  npm install
+   npm install  
 
 3. Setup .env file
   Make sure you have the env file avalialable and ensure that the .env file is present in the root directory of the project.
