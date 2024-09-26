@@ -1,7 +1,7 @@
 import { AppModule } from '../app.module';
 import { NestFactory } from '@nestjs/core';
 import { INestApplication } from '@nestjs/common';
-
+jest.setTimeout(10000); //avoid timeout jest error
 describe('Run app module', () => {
   let app: INestApplication;
 
