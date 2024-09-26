@@ -1,4 +1,8 @@
-import { Injectable, HttpException, Inject, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { FindTripsDto } from './dto/query-trip.dto';
 import { firstValueFrom } from 'rxjs';
@@ -45,7 +49,9 @@ export class TripAvailabilityService {
       });
       return sortedTrips;
     } catch (error) {
-      throw new InternalServerErrorException( `Failed to fetch trips: ${error.response?.status || 'unknown'} ${error.message}`);
+      throw new InternalServerErrorException(
+        `Failed to fetch trips: ${error.response?.status || 'unknown'} ${error.message}`,
+      );
     }
   }
 }
